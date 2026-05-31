@@ -23,6 +23,8 @@ project setup in vs with frontend as react-vite
               { role: "ai", content: "Hi! How can I help?" }
           ```
     - input state for the msg input, with a send button
+4. For editor, used Monaco editor, command is:
+      ```npm i @monaco-editor/react```
   
 *******
 ## Two modes in AI assistant:
