@@ -23,3 +23,15 @@ project setup in vs with frontend as react-vite
               { role: "ai", content: "Hi! How can I help?" }
           ```
     - input state for the msg input, with a send button
+  
+*******
+## Two modes in AI assistant:
+   - ### Builder mode
+       Normal AI coding assistant.
+          User says: build authentication middleware
+          AI: generates edits debugs executes
+       This is normal assistant.
+   - ### Thinking mode
+       AI switches behavior completely, it becomes:
+          ask → evaluate → hint → ask next
+     The role reverses.
