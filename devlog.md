@@ -60,7 +60,12 @@ project setup in vs with frontend as react-vite
           ```setActiveFile(item)```
           onFileClick is just the name of the prop. The actual function behind it is setActiveFile. So yes — calling onFileClick(item) sets activeFile to that item object!
 
-
+3. Implemented the tabs bar which also includes the state management, in App.jsx
+4. Designed dragger div for chat panel and file explorer, also included state management of setting widths using inline style and onMouseMove and onMouseUp in ide-container with handling the onMouseMove
+    with storing the value( explorer or chat) in dragging state and then setting the width corespondingly, in App.jsx
+5. Send editor code to AI
+    Now when user sends a message, the AI should also receive the currently open file's content as context.
+   This is i am doing as first layer already discussed in context engg part.
 
 
 
