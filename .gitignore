@@ -1,0 +1,26 @@
+# Python (Backend)
+Backend/.env
+Backend/venv/
+Backend/__pycache__/
+Backend/**/__pycache__/
+**/*.pyc
+**/*.pyo
+
+# Node (Frontend)
+Frontend/node_modules/
+Frontend/dist/
+Frontend/build/
+Frontend/.env
+Frontend/.env.local
+Frontend/.env.*.local
+Frontend/npm-debug.log*
+Frontend/yarn-debug.log*
+Frontend/yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
