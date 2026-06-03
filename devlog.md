@@ -37,3 +37,42 @@ project setup in vs with frontend as react-vite
        AI switches behavior completely, it becomes:
           ask → evaluate → hint → ask next
      The role reverses.
+
+
+*****
+### 3rd june
+Integrated FastAPI backend with groq api and ai chat panel now listening request and respondng.
+
+__one more thing i got wrt giving context to ai__
+### Context engineering part
+For your AI to truly understand a project it needs:
+File Structure     → what files exist
+File Contents      → what code is in each file
+Import Relations   → which file imports which
+Current open file  → what user is looking at
+Selected code      → what user highlighted
+Error messages     → what's failing
+
+How this is engineered — 3 layers:
+Layer 1 — Static Context
+Read all files, build a map of the project. Send this with every request.
+Layer 2 — Dynamic Context
+What file is open, what lines are selected, what error just happened. Changes in real time.
+Layer 3 — Relationship Graph
+Which files import each other — this is what powers the error chain and flowchart.
+
+The Reality
+You can't send the entire codebase to Groq every time — there's a token limit. So smart IDEs like Cursor do this:
+1. Index the whole project
+2. When user asks something → find RELEVANT files only
+3. Send only those to AI
+This is called __RAG (Retrieval Augmented Generation)__.
+
+Your Build Order for this:
+Step 1 → Send current open file with every message (easy)
+Step 2 → Send full file tree structure (medium)
+Step 3 → Backend reads actual files from disk (medium)
+Step 4 → Build import graph for flowchart (hard)
+Step 5 → RAG for smart context (advanced)
+
+****
