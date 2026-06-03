@@ -1,6 +1,6 @@
 # AI Coding Assistant
 
-A browser-based IDE with an integrated AI coding assistant — built from scratch with React, FastAPI, and Groq.
+A browser-based IDE with an integrated AI coding assistant — inspired by Cursor and VS Code. Built from scratch with React, FastAPI, and Groq. The AI panel understands your full codebase context — not just what you type.
 
 ![Status](https://img.shields.io/badge/status-in%20development-yellow)
 ![Frontend](https://img.shields.io/badge/frontend-React%20%2B%20Vite-blue)
@@ -9,27 +9,40 @@ A browser-based IDE with an integrated AI coding assistant — built from scratc
 
 ---
 
-## What is this?
+## Vision
 
-AI Coding Assistant is a VS Code-inspired IDE that runs in the browser. It combines a full-featured code editor with an AI chat panel that understands your codebase — so you can generate, debug, and explain code without leaving your editor.
+Most AI chat tools are blind to your project. AI Coding Assistant is being built to truly understand your codebase — file structure, import relationships, open files, selected code, and errors — so it can generate, debug, and explain with full context, not hallucinations.
 
 ---
 
-## Features (Current)
+## Features
 
-- **Monaco Editor** — the same editor that powers VS Code, with syntax highlighting and line numbers
-- **File Explorer** — collapsible file tree with folder toggle
-- **AI Chat Panel** — chat with an LLM (Groq / LLaMA) directly inside the IDE
-- **Separated Frontend & Backend** — React frontend, FastAPI backend, clean API boundary
+### Currently Built
+- **Monaco Editor** — the exact editor that powers VS Code, with syntax highlighting and line numbers
+- **File Explorer** — collapsible file tree with per-folder open/close state
+- **AI Chat Panel** — real-time chat with LLaMA 3.3 via Groq API, messages styled by role
+- **FastAPI Backend** — clean REST API with CORS, Pydantic validation, and dotenv config
+- **Separated Architecture** — React frontend on port 5173, FastAPI backend on port 8000
 
-## Features (In Progress)
+### In Progress
+- File click → opens file content in Monaco editor
+- Multi-file tab bar (open, switch, close tabs)
+- AI receives currently open file as context with every message
+- Activity bar with proper icons (Files, Generate, Debug, Explain)
+- Status bar showing language, line number, cursor position
 
-- File click → open in Monaco editor
-- Multi-file tabs
-- AI context awareness — AI sees the currently open file
-- Activity bar with icons
-- Status bar
-- RAG-based full project context for AI
+### Planned (Roadmap)
+- Backend reads real files from disk
+- Full project file tree served via API
+- Import graph — which file imports which
+- Codebase flowchart (React Flow) built from real import relationships
+- RAG (Retrieval Augmented Generation) — index entire project, retrieve only relevant files per query so AI has smart context without hitting token limits
+- Generate panel — AI writes code, diff preview before applying to editor
+- Debug panel — error chain tracing across files, fix suggestions
+- Explain panel — decision cards explaining why code was written a certain way
+- Code execution sandbox — run Python code, see output inside IDE
+- Streaming AI responses — tokens appear character by character
+- Builder Agent loop — generate → execute → fix → retry automatically
 
 ---
 
@@ -37,11 +50,13 @@ AI Coding Assistant is a VS Code-inspired IDE that runs in the browser. It combi
 
 | Layer | Technology |
 |---|---|
-| Frontend | React, Vite, Monaco Editor |
-| Styling | CSS (custom, VS Code-inspired dark theme) |
-| Backend | Python, FastAPI, Uvicorn |
-| AI | Groq API (LLaMA 3.3 70B) |
+| Frontend | React 18, Vite |
+| Code Editor | Monaco Editor (`@monaco-editor/react`) |
 | Icons | Lucide React |
+| Styling | Custom CSS (VS Code dark theme) |
+| Backend | Python, FastAPI, Uvicorn |
+| AI Model | LLaMA 3.3 70B via Groq API |
+| Config | python-dotenv |
 
 ---
 
@@ -53,16 +68,16 @@ AI-Coding-Assistant/
 ├── Frontend/
 │   ├── src/
 │   │   ├── Components/
-│   │   │   ├── FileExplorer.jsx
-│   │   │   └── ChatPanel.jsx
-│   │   ├── App.jsx
-│   │   └── App.css
+│   │   │   ├── FileExplorer.jsx    # collapsible file tree
+│   │   │   └── ChatPanel.jsx       # AI chat UI + API calls
+│   │   ├── App.jsx                 # main layout (activity bar, panels)
+│   │   └── App.css                 # VS Code inspired dark theme
 │   ├── index.html
 │   └── package.json
 │
 └── Backend/
-    ├── main.py
-    ├── .env          ← not committed
+    ├── main.py                     # FastAPI app, /chat endpoint, Groq integration
+    ├── .env                        # API keys — never committed
     ├── .gitignore
     └── requirements.txt
 ```
@@ -72,66 +87,70 @@ AI-Coding-Assistant/
 ## Getting Started
 
 ### Prerequisites
-
 - Node.js 18+
 - Python 3.11+
-- A Groq API key — get one free at [console.groq.com](https://console.groq.com)
+- Groq API key — free at [console.groq.com](https://console.groq.com)
 
-### Frontend Setup
-
+### Frontend
 ```bash
 cd Frontend
 npm install
 npm run dev
+# runs at http://localhost:5173
 ```
 
-Runs at `http://localhost:5173`
-
-### Backend Setup
-
+### Backend
 ```bash
 cd Backend
 python -m venv venv
 venv\Scripts\activate        # Windows
 source venv/bin/activate     # Mac/Linux
-
 pip install fastapi uvicorn groq python-dotenv
 ```
 
-Create a `.env` file in the `Backend` folder:
+Create `.env` in the `Backend` folder:
 ```
 GROQ_API_KEY=your_api_key_here
 ```
 
-Start the server:
 ```bash
 uvicorn main:app --reload
+# runs at http://localhost:8000
+# API docs at http://localhost:8000/docs
 ```
-
-Runs at `http://localhost:8000`
 
 ---
 
-## API Endpoints
+## API
 
 | Method | Endpoint | Description |
 |---|---|---|
 | GET | `/` | Health check |
 | POST | `/chat` | Send message, get AI response |
 
-### POST `/chat` — Request Body
+### POST `/chat`
 ```json
-{
-  "message": "Write a Python function to reverse a string"
-}
+// Request
+{ "message": "Write a Python function to reverse a string" }
+
+// Response
+{ "response": "Here is a Python function..." }
 ```
 
-### POST `/chat` — Response
-```json
-{
-  "response": "Here's a Python function..."
-}
+---
+
+## How AI Context Works (Current → Planned)
+
 ```
+Level 1 (current)  → user message only
+Level 2 (next)     → current open file sent with every message
+Level 3            → all open files sent
+Level 4            → backend reads full project from disk
+Level 5            → import graph built from real file relationships
+Level 6 (RAG)      → entire project indexed, only relevant files retrieved per query
+```
+
+RAG means the AI won't hallucinate about your project — it will retrieve the actual relevant files and send only those as context, staying within token limits while being fully aware of your codebase.
 
 ---
 
@@ -139,33 +158,17 @@ Runs at `http://localhost:8000`
 
 | Variable | Description |
 |---|---|
-| `GROQ_API_KEY` | Your Groq API key |
-
-Never commit your `.env` file. It is already in `.gitignore`.
+| `GROQ_API_KEY` | Your Groq API key — never commit this |
 
 ---
 
-## Roadmap
-
-- [ ] File click opens file in Monaco
-- [ ] Multi-file tab system
-- [ ] AI receives current file as context
-- [ ] Activity bar with icons
-- [ ] Status bar (language, line number)
-- [ ] Backend reads real files from disk
-- [ ] Full project context (RAG)
-- [ ] Import graph and codebase flowchart
-- [ ] Code execution sandbox
-- [ ] Streaming AI responses
-
----
-
-## Contributing
-
-This project is currently being built as a learning project. Feel free to open issues or suggestions.
+## Daily Rules (Dev Philosophy)
+- Push to GitHub every day — even 5 lines
+- Build something visible every day — no invisible infrastructure days
+- Build components before connecting them — hardcoded data first, API second
+- Test in browser after every component
 
 ---
 
 ## License
-
 MIT
