@@ -1,12 +1,16 @@
 import { useState } from "react";
 import {ChevronDown,ChevronRight} from 'lucide-react';
 
-function FileItem({item}){
+function FileItem({item,onFileClick}){
     const [isOpen,setIsOpen]=useState(false);
     return(
         <>
             {item.type=="file" && (
-                <div>📄 {item.name}</div>
+                <div className="file-item" onClick={()=>{
+                        onFileClick(item);
+                    }}>
+                    📄 {item.name}
+                </div>
             )}
             {item.type=="folder" && (
                 <>
@@ -19,7 +23,7 @@ function FileItem({item}){
                 { isOpen && (
                     <div className="folder-children">
                         {item.children.map((child)=>(
-                            <FileItem key={child.name} item={child}/>
+                            <FileItem key={child.name} item={child} onFileClick={onFileClick}/>
                         ))}
                     </div>
 
@@ -27,23 +31,22 @@ function FileItem({item}){
                 </>
             )}
         </>
-        
     )
 
 }
 
-function FileExplorer(){
+function FileExplorer({onFileClick}){
     const [isOpen,setIsOpen]=useState(false);
     
     const files=[
         {name:"src",type:"folder",
             children:[
-                {name:"appp.jsx",type:"file"},
-                {name:"main.jsx",type:"file"},
+                {name:"app.jsx",type:"file", content:"// app.jsx content here"},
+                {name:"main.jsx",type:"file", content:"// main.jsx content here"},
             ]
         },
-        {name:"index.html",type:"file"},
-        {name:"package.json",type:"file"},
+        {name:"index.html",type:"file", content:"index.html content here"},
+        {name:"package.json",type:"file", content:"package.json content here"},
     ]
     return(
         <div className="file-container">
@@ -55,7 +58,10 @@ function FileExplorer(){
             {isOpen && 
             (<div className="file-items"> 
                 {files.map((item)=>(
-                    <FileItem key={item.name} item={item}/>
+                    <FileItem key={item.name} 
+                              item={item} 
+                              onFileClick={onFileClick}
+                             />
                 ))}
             </div>)}
         </div>

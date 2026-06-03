@@ -17,6 +17,7 @@ body {
   height: 100vh;
   width: 100vw;
   overflow: hidden;
+  user-select: none;
 }
 
 .activity-bar {
@@ -108,15 +109,30 @@ body {
   padding: 8px 12px;
   cursor: pointer;
 }
+
+/* file explorer */
+.file-explorer {
+  width: 250px;
+  background: #252526;
+  height: 100vh;
+  padding: 8px 0px;
+  overflow-y: auto;
+  user-select: none;
+}
+
+
+
 .explorer-header {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 0px;
+  padding: 6px 12px;
   cursor: pointer;
   font-size: 11px;
+  font-weight: 600;
   letter-spacing: 1px;
   color: #bbbbbb;
+  text-transform: uppercase;
 }
 
 .explorer-header:hover {
@@ -127,10 +143,11 @@ body {
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 3px 8px;
+  padding: 2px 12px;
   cursor: pointer;
   font-size: 13px;
   color: #cccccc;
+  height: 22px;
 }
 
 .folder-header:hover {
@@ -138,16 +155,96 @@ body {
 }
 
 .folder-children {
-  padding-left: 16px;
+  padding-left: 12px;
 }
 
 .file-item {
-  padding: 3px 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 12px;
   cursor: pointer;
   font-size: 13px;
   color: #cccccc;
+  height: 22px;
 }
 
 .file-item:hover {
   background: #2a2d2e;
+}
+
+.file-item.active {
+  background: #094771;
+  color: white;
+}
+
+
+.editor-area {
+  flex: 1;
+  background: #1e1e1e;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.tabs-bar {
+  display: flex;
+  background: #2d2d2d;
+  height: 35px;
+  min-height: 35px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tabs-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  font-size: 13px;
+  color: #aaaaaa;
+  cursor: pointer;
+  border-right: 1px solid #1e1e1e;
+  white-space: nowrap;
+  min-width: fit-content;
+}
+
+.tab:hover {
+  background: #3d3d3d;
+  color: white;
+}
+
+.active-tab {
+  background: #1e1e1e;
+  color: white;
+  border-top: 2px solid #0078d4;
+}
+
+.tab span {
+  font-size: 16px;
+  color: #aaaaaa;
+  border-radius: 4px;
+  padding: 0 3px;
+}
+
+.tab span:hover {
+  background: #555555;
+  color: white;
+}
+
+/* drag handler */
+
+.drag-handle{
+  width:4px;
+  background:transparent;
+  cursor:col-resize;
+}
+
+.drag-handle:hover {
+  background: #0078d4;
 }
