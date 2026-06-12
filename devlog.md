@@ -109,3 +109,8 @@ Your Build Order for this:
 ****
 
 
+### some commands for backend running:
+- to switch into venv : ```.\venv\Scripts\activate.ps1```
+- to run fast api app : ```uvicorn main:app --reload```
+
+
