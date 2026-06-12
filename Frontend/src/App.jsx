@@ -1,17 +1,21 @@
-import Editor from '@monaco-editor/react'
-import './App.css'
-import FileExplorer from './Components/FileExplorer'
-import ChatPanel from './Components/ChatPanel'
+import Editor from '@monaco-editor/react';
+import FileExplorer from './Components/FileExplorer';
+import ChatPanel from './Components/ChatPanel';
 import Tabs from './Components/Tabs';
-import { useState } from 'react'
+import ActivityBar from './Components/ActivityBar';
+import RightPanel from './Components/RightPanel';
+import ToolBar from './Components/ToolBar';
+import { useState } from 'react';
+import './App.css';
+
 
 const App=()=>{
-
   const [openTabs,setOpenTabs] = useState([]);
   const [activeTab, setActiveTab] = useState(null);
   const [dragging, setDragging] = useState(null);
-  const [explorerWidth, setExplorerWidth] = useState(250)
-  const [chatWidth, setChatWidth] = useState(300)
+  const [explorerWidth, setExplorerWidth] = useState(250);
+  const [chatWidth, setChatWidth] = useState(300);
+  const [activePanel,setActivePanel] = useState(null);
 
   const handleFileClick=(file)=>{
       const alreadyOpen=openTabs.find(tab=>tab.name===file.name);
@@ -31,43 +35,77 @@ const App=()=>{
     if(dragging==="chat"){
       setChatWidth(window.innerWidth-e.clientX);
     }
-  };
+  }
+  const handleApplyCode = (code) => {
+    if (activeTab) {
+        const updatedTab = { ...activeTab, content: code }
+        setActiveTab(updatedTab)
+        setOpenTabs(openTabs.map(t => 
+            t.name === activeTab.name ? updatedTab : t
+        ))
+    }
+}
+
 
   return(
     <div className="ide-container"
-      onMouseMove={(e)=>{
-        if(dragging) handlMouseMove(e);
-      }}
+      onMouseMove={(e)=>{ if(dragging) handlMouseMove(e); }}
       onMouseUp={()=>setDragging(null)}>
-      <div className='activity-bar'>AB</div>
 
-      <div className='file-explorer' style={{ width:explorerWidth }}>
-        <FileExplorer onFileClick={handleFileClick}/>
+      <div className='main-area'>
+        <div className='activity-bar'>
+          <ActivityBar/>
+        </div>
+
+        <div className='file-explorer' style={{ width:explorerWidth }}>
+          <FileExplorer onFileClick={handleFileClick}/>
+        </div>
+
+        <div className='drag-handle'  onMouseDown={()=>setDragging("explorer")}></div>
+
+        <div className='editor-area'>
+          <Tabs 
+              openTabs={openTabs} 
+              activeTab={activeTab} 
+              onTabClick={setActiveTab} 
+              onTabClose={handleTabClose}
+              activePanel={activePanel}
+              setActivePanel={setActivePanel}
+          />
+          <Editor
+            height="100%"
+            language="javascript"
+            theme="vs-dark"
+            className='editor-area'
+            value={activeTab ? activeTab.content : "// Start coding here..."}
+            onChange={(newValue) => {
+              if (activeTab) {
+                const updated = { ...activeTab, content: newValue }
+                setActiveTab(updated)
+                setOpenTabs(openTabs.map(t =>
+                  t.name === activeTab.name ? updated : t
+                ))
+              }
+            }}
+          />
+        </div>
+
+        <div className='drag-handle' 
+            onMouseDown={()=>setDragging("chat")}></div>
+        
+        <div className='right-panel' style={{ width: activePanel ? chatWidth : 0  }}>
+          <RightPanel 
+            activeTab={activeTab}
+            activePanel={activePanel}
+            setActivePanel={setActivePanel}
+            onApplyCode={handleApplyCode}
+          />
+        </div>
       </div>
-
-      <div className='drag-handle' 
-          onMouseDown={()=>setDragging("explorer")}></div>
-
-      <div className='editor-area'>
-        <Tabs 
-            openTabs={openTabs} 
-            activeTab={activeTab} 
-            onTabClick={setActiveTab} 
-            onTabClose={handleTabClose}
-        />
-        <Editor
-          height="100%"
-          language="javascript"
-          theme="vs-dark"
-          className='editor-area'
-          value={activeTab ? activeTab.content : "// Start coding here..."}
-        />
-      </div>
-      <div className='drag-handle' 
-          onMouseDown={()=>setDragging("chat")}></div>
-
-      <div className='chat-panel' style={{ width:chatWidth }}>
-        <ChatPanel/>
+      <div className='status-bar'>
+          <span>AI Coding Assistant</span>
+          <span>{activeTab ? activeTab.name : "No file open"}</span>
+          <span>{activeTab ? "JavaScript" : ""}</span>
       </div>
     </div>
   )

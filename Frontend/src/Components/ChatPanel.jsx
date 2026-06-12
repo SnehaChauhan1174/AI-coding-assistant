@@ -1,59 +1,66 @@
-import { useState } from "react";
+import { useState } from "react"
 
-function ChatPanel(){
+function ChatPanel({ activeTab, onApplyCode }) {
+    const [prompt, setPrompt] = useState("")
+    const [generatedCode, setGeneratedCode] = useState("")
+    const [isLoading, setIsLoading] = useState(false)
 
-    const [messages,setMessages]=useState([]);
-    const [input,setInput]=useState("");
-
-    const handleSend=async(e)=>{
-        e.preventDefault();
-        const newMsg={
-            role:"user",
-            content:input
-        }
-        const updatedMsg=[...messages,newMsg];
-        setMessages([...messages,newMsg]);
-        setInput("");
-        try{
-            const resp=await fetch("http://localhost:8000/chat",{
-                method:"POST",
-                headers:{
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ message:input }), 
-
+    const handleGenerate = async () => {
+        if (!prompt.trim()) return
+        setIsLoading(true)
+        try {
+            const resp = await fetch("http://localhost:8000/generate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    prompt: prompt,
+                    fileContent: activeTab ? activeTab.content : null,
+                    fileName: activeTab ? activeTab.name : null
+                })
             })
-            if(!resp.ok){
-                throw new Error("Failed to send msgs");
-            }
-            const data=await resp.json();
-            const aiMsg={role:"ai",content:data.response}
-            setMessages([...updatedMsg,aiMsg]);
-        }
-        catch(err){
-            console.error("Error communicating with backend:", err);
+            const data = await resp.json()
+            setGeneratedCode(data.code)
+        } catch (err) {
+            console.error(err)
+        } finally {
+            setIsLoading(false)
         }
     }
 
-    return(
-        <>
-            <div className="chat-messages">
-                {messages.map((msg,index)=>(
-                    <div key={index} className={msg.role=="user"?"user-msg":"ai-msg"}>
-                        {msg.content}
-                    </div>
-                ))}
-            </div>
-            <div className="chat-input-area">
-                <input 
-                    type="text" 
-                    value={input}
-                    onChange={(e)=>setInput(e.target.value)}
-                    placeholder="Ask something"
+    return (
+        <div className="generate-panel">
+            <div className="generate-input-area">
+                <textarea
+                    value={prompt}
+                    onChange={(e) => setPrompt(e.target.value)}
+                    placeholder="Describe what you want to generate..."
+                    className="generate-textarea"
                 />
-                <button onClick={handleSend}>send</button>
+                <button onClick={handleGenerate} className="generate-btn">
+                    {isLoading ? "Generating..." : "Generate"}
+                </button>
             </div>
-        </>
+
+            {isLoading && (
+                <div className="loading">
+                    <div className="spinner"></div>
+                    <span>Generating code...</span>
+                </div>
+            )}
+
+            {generatedCode && !isLoading && (
+                <div className="generated-output">
+                    <div className="output-header">
+                        <span>Generated Code</span>
+                        <button onClick={() => onApplyCode(generatedCode)} className="apply-btn">
+                            Apply to Editor
+                        </button>
+                    </div>
+                    <pre className="code-block">{generatedCode}</pre>
+                </div>
+            )}
+        </div>
     )
 }
+
 export default ChatPanel

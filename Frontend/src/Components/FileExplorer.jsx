@@ -41,12 +41,13 @@ function FileExplorer({onFileClick}){
     const files=[
         {name:"src",type:"folder",
             children:[
-                {name:"app.jsx",type:"file", content:"// app.jsx content here"},
+                {name:"app.jsx",type:"file", content:"import React from 'react"},
                 {name:"main.jsx",type:"file", content:"// main.jsx content here"},
             ]
         },
         {name:"index.html",type:"file", content:"index.html content here"},
         {name:"package.json",type:"file", content:"package.json content here"},
+         {name:"main.py",type:"file", content:"python content here"},
     ]
     return(
         <div className="file-container">
