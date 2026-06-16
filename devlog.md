@@ -157,6 +157,28 @@ return (
 ```
 we can do like this
 
+- Next i go to build the tree in backend which is recieving the path from frontend:
+  now for getting the directories and files from path we used os module
+  forming same structure of file tree as we made earlier dummy
+  a list of dictionaries of files and folders each dict containing
+    - name
+    - type - file/folder
+    - path - full path till now( which we get from curr path and file or foldr name joining using os.path.join()
+    - children -[] same list again or children if curr was directory
+  now for this made a diff function to work recursively as if wriiten in same function with FastAPI endpoint:
+  @app.get("/files")
+  when we use decorstors these made func to return a sepcific wrapper form defined in decorator itself.
+  now it return a HTTP response with JSON format so then it will return
+  {"tree":[]} like this
+```
+  {
+  "name": "src",
+  "type": "folder",
+  "children": {"tree": [...]}  // ← wrong! extra wrapper
+}
+```
+
+
   
   
 
