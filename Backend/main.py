@@ -56,12 +56,10 @@ def generate(request: GenerateRequest):
     )
     return {"code": response.choices[0].message.content}
 
-
-
 class FileRequest(BaseModel):
     fileContent: str
     fileName: Optional[str] = None
-    language: Optional[str] = "code"   # add this
+    language: Optional[str] = "code"   
 
 @app.post("/debug")
 def debug(request: FileRequest):
@@ -87,3 +85,42 @@ def debug(request: FileRequest):
     )
     import json
     return json.loads(response.choices[0].message.content)
+
+def build_tree(path):
+    tree=[]
+    files_folders=os.listdir(path) # will return a list of files n folders
+    for f in files_folders:
+        full_path=os.path.join(path,f)
+        f_obj={}
+        f_obj["name"]=f
+        f_obj["path"]=full_path
+        if(os.path.isdir(full_path)):
+            f_obj["type"]="folder"
+            f_obj["children"]=build_tree(full_path)
+        else:
+            f_obj["type"]="file"
+
+        tree.append(f_obj)
+    return tree
+
+
+@app.get("/files")
+def get_files(path:str):
+    return {"tree":build_tree(path)}
+
+@app.get("/file-content")
+def get_file_content(path:str):
+    with open(path,"r",encoding="utf-8") as f:
+        return {"content":f.read()}
+
+@app.get("/create-project")
+def create_file_path(path:str,name:str):
+    file_path=os.path.join(path,name)
+    os.makedirs(file_path,exist_ok=True) # makedirs makes nested folders
+    return {"success": True, "path": file_path}
+
+
+
+
+
+

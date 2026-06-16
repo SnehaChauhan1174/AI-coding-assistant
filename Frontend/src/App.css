@@ -154,20 +154,23 @@ body {
 .folder-header:hover {
   background: #2a2d2e;
 }
-
+.file-items {
+    padding-left: 8px;
+} 
 .folder-children {
   padding-left: 12px;
 }
 
 .file-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 2px 12px;
-  cursor: pointer;
-  font-size: 13px;
-  color: #cccccc;
-  height: 22px;
+    padding: 2px 8px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #cccccc;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
 }
 
 .file-tabs {
@@ -439,4 +442,67 @@ body {
 .issue-title{
     font-weight:bold;
     color:#ff5555;
+}
+
+
+/* file explorer file css */
+.open-folder {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px 12px;
+}
+
+.explorer-hint {
+    font-size: 12px;
+    color: #858585;
+}
+
+.explorer-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #0078d4;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    width: 100%;
+}
+
+.explorer-btn:hover {
+    background: #006cbf;
+}
+
+.path-input-area {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.path-input {
+    background: #3c3c3c;
+    border: 1px solid #555;
+    border-radius: 6px;
+    padding: 6px 8px;
+    color: #cccccc;
+    font-size: 12px;
+    outline: none;
+    width: 100%;
+}
+
+.path-open-btn {
+    background: #2ea043;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.path-open-btn:hover {
+    background: #3ab54e;
 }

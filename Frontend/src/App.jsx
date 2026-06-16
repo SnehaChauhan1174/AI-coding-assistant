@@ -16,14 +16,29 @@ const App=()=>{
   const [explorerWidth, setExplorerWidth] = useState(250);
   const [chatWidth, setChatWidth] = useState(300);
   const [activePanel,setActivePanel] = useState(null);
+  
 
-  const handleFileClick=(file)=>{
-      const alreadyOpen=openTabs.find(tab=>tab.name===file.name);
-      if(!alreadyOpen){
-        setOpenTabs([...openTabs,file]);
-      }
-      setActiveTab(file);
+  const handleFileClick=async(file)=>{
+    //fetch real content from backend
+    try{
+    const resp=await fetch(`http://localhost:8000/file-content?path=${file.path}`,{
+      method:"GET"
+    });
+    const data=await resp.json();
+    const fileWithContent={...file,content:data.content};
+
+    const alreadyOpen=openTabs.find(tab=>tab.name===file.name);
+    if(!alreadyOpen){
+      setOpenTabs([...openTabs,fileWithContent]);
+    }
+    setActiveTab(fileWithContent);
+  }catch(err){
+    console.log(err);
   }
+
+    
+  }
+ 
   const handleTabClose = (tab) => {
     setOpenTabs(openTabs.filter(t => t.name !== tab.name))
     if(activeTab?.name === tab.name) setActiveTab(null)
@@ -44,7 +59,24 @@ const App=()=>{
             t.name === activeTab.name ? updatedTab : t
         ))
     }
-}
+  }
+  const extensions={
+    "jsx":"javascript",
+    "js":"javascript",
+    "java":"java",
+    "py":"python",
+    "cpp":"cpp",
+    "html":"html",
+    "css":"css",
+    "env":"env",
+  }
+  const getExtension=(name)=>{
+    const ext=name.split(".").pop();
+    if(!(ext in extensions)){
+      return "txt";
+    }
+    return extensions[ext];
+  }
 
 
   return(
@@ -58,7 +90,11 @@ const App=()=>{
         </div>
 
         <div className='file-explorer' style={{ width:explorerWidth }}>
-          <FileExplorer onFileClick={handleFileClick}/>
+          <FileExplorer onFileClick={(item)=>{
+                  handleFileClick(item);
+                  
+          }}/>
+                     
         </div>
 
         <div className='drag-handle'  onMouseDown={()=>setDragging("explorer")}></div>
@@ -74,7 +110,7 @@ const App=()=>{
           />
           <Editor
             height="100%"
-            language="javascript"
+            language={activeTab ? getExtension(activeTab.name):"javascript"}
             theme="vs-dark"
             className='editor-area'
             value={activeTab ? activeTab.content : "// Start coding here..."}
