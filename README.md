@@ -154,21 +154,7 @@ RAG means the AI won't hallucinate about your project — it will retrieve the a
 
 ---
 
-## Environment Variables
 
-| Variable | Description |
-|---|---|
-| `GROQ_API_KEY` | Your Groq API key — never commit this |
 
 ---
 
-## Daily Rules (Dev Philosophy)
-- Push to GitHub every day — even 5 lines
-- Build something visible every day — no invisible infrastructure days
-- Build components before connecting them — hardcoded data first, API second
-- Test in browser after every component
-
----
-
-## License
-MIT
