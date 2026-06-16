@@ -178,7 +178,10 @@ we can do like this
 }
 ```
 
-
+- so now getting the file content what i think ki lets make content key itslef in tree while loading
+  but this approach will be slow and thus we can do lazy laoding in which we can load the content of only file we are opening
+  which is what vs also does
+  
   
   
 
