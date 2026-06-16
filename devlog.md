@@ -128,7 +128,34 @@ Implementing the editor functionalities with file explorer:
 ***
 Next thing i am doing is create file and folder functionality, now as vs does to create file and folder in local system and also opening older from local system we can do that also
 
+in thiswe go first with making opne folder functionality for this, i created a button and on clciking that btn an inpit area will get opened and user will eneter the path and it will et opne then
+i wrote a diff function for shwoing the text area when a button will be clicked but the problem was:
+If your goal is to show a textarea when a button is clicked, this won't work:
 
+```<button onClick={handlePath}>Add Path</button>```
+
+because React doesn't render JSX returned from an event handler. Event handlers should update state, not return UI.
+```
+const [showTextarea, setShowTextarea] = useState(false);
+
+const handlePath = () => {
+    setShowTextarea(true);
+};
+
+return (
+    <>
+        <button onClick={handlePath}>Add Path</button>
+
+        {showTextarea && (
+            <textarea
+                onChange={(e) => setPath(e.target.value)}
+                placeholder="Enter path"
+            />
+        )}
+    </>
+);
+```
+we can do like this
 
   
   
