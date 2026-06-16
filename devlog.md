@@ -119,11 +119,14 @@ Implementing the editor functionalities with file explorer:
 - **Task:**
  First how the extension we can let the editor know right now it is language="javascript" fixed
   but we want it to knwo from current file so we will send extension thru file name (.jsx) right file name is stored in string
-  **Solution i thought**
+ - **Solution i thought**
   for it i think about creating a diff state for it extension and setextension and taking the file thru fileClick and in fileexplorer
   and then extracting its extension using simple string operation
-  **actual thing**
+ - **actual thing**
   but this is redundant thing as activeTab already had content and name of current file so we can just get from it
+
+
+  
   
 
 
