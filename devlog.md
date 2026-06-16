@@ -123,7 +123,11 @@ Implementing the editor functionalities with file explorer:
   for it i think about creating a diff state for it extension and setextension and taking the file thru fileClick and in fileexplorer
   and then extracting its extension using simple string operation
  - **actual thing**
-  but this is redundant thing as activeTab already had content and name of current file so we can just get from it
+  but this is redundant thing as activeTab already had content and name of current file so we can just get from it.
+
+***
+Next thing i am doing is create file and folder functionality, now as vs does to create file and folder in local system and also opening older from local system we can do that also
+
 
 
   
