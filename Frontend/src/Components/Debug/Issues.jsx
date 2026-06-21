@@ -1,7 +1,8 @@
+import { useState } from "react";
 import "./../../styles/issues.css";
 import { Lightbulb, TriangleAlert } from "lucide-react";
 
-function Issues({ activeTab, bugs, isLoading, onApplyCode, setNeedRefresh, onProposeFix, editorRef,  setFixLogs }) {
+function Issues({ activeTab, bugs, isLoading, setNeedRefresh, onProposeFix, editorRef,  setFixLogs }) {
     if (!activeTab) {
         return (
         <div className="empty-state">
@@ -13,9 +14,19 @@ function Issues({ activeTab, bugs, isLoading, onApplyCode, setNeedRefresh, onPro
   if (isLoading) {
     return <p>Loading issues...</p>;
   }
+  const [generating, setGenerating]=useState(null);
+
   const handleApplyFix = async(bug)=>{
     if (!activeTab || !editorRef?.current) return;
     try{
+      setGenerating(bug.id);
+      setFixLogs([
+        {
+          id:`start-${bug.id}`,
+          message:`Initiating AI Fix Agent loop for:${bug.title}`,
+          status:"pending"
+        }
+      ]);
     const editor=editorRef.current;
     const model=editor.getModel();
     if(!model){
@@ -45,29 +56,48 @@ function Issues({ activeTab, bugs, isLoading, onApplyCode, setNeedRefresh, onPro
     const match=matches[0];
 
       //calling the backend
-      const resp=await fetch("https://localhost:8000/fix-agent/generate",{
+      const resp=await fetch("http://localhost:8000/fix-agent/generate",{
         method:"POST",
         headers:{
           "Content-Type":"application/json"
         },
-        body:JSON.stringify({issue:bug, code:model.getValue()})
+        body:JSON.stringify({
+                issue:bug, 
+                code:model.getValue(),
+                anchor:bug.anchor
+              })
       })
+      if(!resp.ok) throw new Error("Backend patch generation failed");
       const data=await resp.json();
-
+      setFixLogs([
+        {
+          id: `gen-${bug.id}`,
+          message: `Agent generated patch snippet for: ${bug.title}`,
+          status: "done"
+        }
+      ]);
       const range=match.range;
       const proposedCode={
         range,
-        oldCode:bug.anchor,
-        newCode:data.replacement,
+        old_snippet:bug.anchor,
+        new_snippet:data.replacement,
         issue:bug
       }
       // setProposedCode(proposedCode);
       // setShowDiff(true);
       onProposeFix(proposedCode);
+      setGenerating(null);
 
     }catch(err){
       console.log(err);
-      console.error(err);
+      setGenerating(null);
+      setFixLogs([
+      {
+        id: `err-${bug.id}`,
+        message: `Agent failed to complete the patch generation sequence`,
+        status: "still-failing"
+      }
+    ]);
     }
 
   }
@@ -104,13 +134,13 @@ function Issues({ activeTab, bugs, isLoading, onApplyCode, setNeedRefresh, onPro
          </div>
 
           <div className="issue-actions">
-            <button className="apply-btn" onClick={()=>handleApplyFix(item)}>
-              Apply Fix
+            <button className="apply-btn" onClick={()=>handleApplyFix(item)} disabled={generating === item.id}>
+              {generating === item.id ? "Fixing..." : "Apply Fix"}
             </button>
 
-            <button className="explain-btn">
+            {/* <button className="explain-btn">
               Explain Why
-            </button>
+            </button> */}
           </div>
         </div>
       ))}

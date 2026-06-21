@@ -1,37 +1,77 @@
-.fixloop-container{
-    padding:20px;
-    color:white;
+.fix-loop-container {
+  padding: 16px;
+  color: #e0e0e0;
 }
 
-.fixloop-logs{
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-    margin-top:20px;
+.fix-loop-header h3 {
+  margin-bottom: 20px;
+  font-size: 1.1rem;
+  color: #98c379;
 }
 
-.fixlog{
-    padding:12px;
-    border-radius:8px;
-    border:1px solid #333;
-    background:#1d1d1d;
+.fix-loop-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.fixlog.success{
-    border-left:4px solid #22c55e;
+/* --- THE LEFT-TO-RIGHT SLIDE ANIMATION --- */
+.loop-step-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  background: #1e1e1e;
+  border: 1px solid #2d2d2d;
+  border-radius: 6px;
+  
+  /* Initial hidden state before animation triggers */
+  opacity: 0;
+  transform: translateX(-24px);
+  
+  /* Staggered entry calculation based on item index */
+  animation: slideInRight 0.4s ease forwards;
+  animation-delay: calc(var(--item-index) * 0.15s);
 }
 
-.fixlog.warning{
-    border-left:4px solid orange;
+@keyframes slideInRight {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
-.fixlog.error{
-    border-left:4px solid red;
+/* Minimal Status Visuals */
+.loop-step-card.done .dot { background: #4caf50; }
+.loop-step-card.passed .dot { background: #00bcd4; }
+.loop-step-card.pending .dot { background: #ffeb3b; }
+.loop-step-card.still-failing .dot { background: #f44336; }
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
 }
 
-.fixloop-summary{
-    margin-top:30px;
-    padding:15px;
-    border:1px solid #333;
-    border-radius:8px;
+.step-body {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+}
+
+.step-text {
+  margin: 0;
+  font-size: 13px;
+  font-family: monospace;
+}
+
+.step-badge {
+  font-size: 11px;
+  text-transform: uppercase;
+  background: #2d2d2d;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #aaa;
 }

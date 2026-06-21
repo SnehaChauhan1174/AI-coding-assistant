@@ -1,31 +1,35 @@
+import React from "react";
 import "./../../styles/fixloop.css";
 
-function FixLoop({fixLogs,bugs}){
-    const remIssues=bugs.filter(
-        bug=>bug.status!=="fixed"
-    ).length;
-    return(
-        <div className="fixloop-container">
-            <h3>Agent Fix Loop</h3>
-            <div className="fixloop-logs">
-                {fixLogs.length===0 ? (
-                    <p></p>
-                ):(
-                    fixLogs.map((log,idx)=>(
-                        <div key={idx} className={`fixlog ${log.status}`}>
-                            {log.message}
-                        </div>
-                    ))
-                )}
+function FixLoop({ fixLogs }) {
+  return (
+    <div className="fix-loop-container">
+      <div className="fix-loop-header">
+        <h3>Agent Execution Trace</h3>
+      </div>
+      <div className="fix-loop-steps">
+        {fixLogs.length === 0 ? (
+          <p className="empty-message">No active agent tracking logs found. Trigger a code fix to populate.</p>
+        ) : (
+          fixLogs.map((log, index) => (
+            <div 
+              className={`loop-step-card ${log.status}`} 
+              key={log.id}
+              style={{ "--item-index": index }} // Passed to CSS for staggered entry timings
+            >
+              <div className="step-indicator">
+                <span className={`dot ${log.status}`} />
+              </div>
+              <div className="step-body">
+                <p className="step-text">{log.message}</p>
+                <span className="step-badge">{log.status}</span>
+              </div>
             </div>
-            <div className="fixloop-summary">
-                <h4>Current Status</h4>
-                <p>
-                    Remaining Issues: {remIssues}
-                </p>
-
-            </div>
-        </div>
-    )
+          ))
+        )}
+      </div>
+    </div>
+  );
 }
+
 export default FixLoop;

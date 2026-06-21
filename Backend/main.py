@@ -139,11 +139,15 @@ def run_review_agent(request: FileRequest):
     }
 
 
-@app("/fix-agent/generate")
-def generate_fix(req:dict):
+class FixRequest(BaseModel):
+    issue:dict
+    code:str
+
+@app.post("/fix-agent/generate")
+def generate_fix(req:FixRequest):
     result = fix_agent.invoke({
-        "issue":req["issue"],
-        "code":req["code"],
+        "issue":req.issue,
+        "code":req.code,
         "logs":[]
     })
     return {

@@ -76,23 +76,28 @@ def generate_patch(state:FixState):
             text = text[4:].strip()
 
     result = json.loads(text)
+    agent_log=[
+        {
+            "id":f"gen-{issue['id']}-{state.get('attempts', 0)}",
+            "message":f"Agent generated fix snippet for: {issue['title']}",
+            "status":"done"
+        }
+    ]
 
     return{
         "patch":{
             "anchor":issue["anchor"],
             "replacement":result["replacement"]
         },
-        "logs":state.get("logs",[])+[
-            f"Generated patch for {issue['id']}"
-        ]
+        "logs":agent_log
     }
 
 graph=StateGraph(FixState)
 
 graph.add_node("generate_patch",generate_patch)
 
-graph.set_entry_point("generaye_patch")
-graph.set_finish_point("generate_patch")
+graph.set_entry_point("generate_patch")
+graph.add_edge("generate_patch",END)
 
 fix_agent=graph.compile()
 

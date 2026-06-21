@@ -5,21 +5,21 @@ import Chain from "./Debug/Chain";
 import FixLoop from "./Debug/FixLoop";
 import "./../styles/debug.css";
 
-const LANG_MAP = {
-  js: "JavaScript", jsx: "JavaScript",
-  ts: "TypeScript", tsx: "TypeScript",
-  py: "Python", java: "Java",
-  cpp: "C++", c: "C", go: "Go",
-  rs: "Rust", rb: "Ruby", cs: "C#"
-}
+// const LANG_MAP = {
+//   js: "JavaScript", jsx: "JavaScript",
+//   ts: "TypeScript", tsx: "TypeScript",
+//   py: "Python", java: "Java",
+//   cpp: "C++", c: "C", go: "Go",
+//   rs: "Rust", rb: "Ruby", cs: "C#"
+// }
 
-function DebugPanel({ activeTab, onApplyCode, onProposeFix, editorRef }) {
+function DebugPanel({ activeTab, onApplyCode, onProposeFix, editorRef, fixLogs, setFixLogs }) {
   const [activeDebugIcon,setActiveDebugIcon]=useState("issues");
   const [bugs,setBugs]=useState([]);
   const [steps,setSteps]=useState([]);
   const [loading,setLoading]=useState(false);
   const [needRefresh,setNeedRefresh]=useState(false);
-  const [fixLogs,setFixLogs]=useState([]);
+  
 
     const handleAnalyze=async()=>{
         const oldBugCount=bugs.length;
@@ -39,18 +39,20 @@ function DebugPanel({ activeTab, onApplyCode, onProposeFix, editorRef }) {
             setSteps(data.steps || []);
 
             setFixLogs(prev=>[
-              ...prev,
+              ...prev, 
               {
-                status:"success",
-                message:`Reanalyzed ${activeTab.name}`
+                id: `analyze-${Date.now()}`,
+                status: "done", 
+                message: `Analyzed workspace file: ${activeTab.name}`
               }
             ]);
             if(oldBugCount>0){
               if(newBugCount<oldBugCount){
                 setFixLogs(prev=>[
                   ...prev,{
-                    status:"success",
-                    message:`${oldBugCount-newBugCount} issue resolved` 
+                    id: `resolve-${Date.now()}`,
+                    status: "done", 
+                    message: `Clean compilation! ${oldBugCount - newBugCount} issue(s) successfully resolved`
                   }
                 ]);
               }
@@ -58,8 +60,9 @@ function DebugPanel({ activeTab, onApplyCode, onProposeFix, editorRef }) {
                 setFixLogs(prev => [
                   ...prev,
                   {
-                    status: "warning",
-                    message: `${newBugCount - oldBugCount} new issue detected`
+                    id: `warn-${Date.now()}`,
+                    status: "still-failing", 
+                    message: `Alert: ${newBugCount - oldBugCount} new issue(s) detected in source`
                   }
                 ]);
               }
@@ -67,15 +70,13 @@ function DebugPanel({ activeTab, onApplyCode, onProposeFix, editorRef }) {
                 setFixLogs(prev => [
                   ...prev,
                   {
-                    status: "warning",
-                    message: "Issue count unchanged"
+                    id: `unchanged-${Date.now()}`,
+                    status: "still-failing", 
+                    message: "Analysis cycle finished: Issue count remains unchanged"
                   }
                 ]);
               }
             }
-
-            
-            console.log(data["issues"]);
 
         }
         catch(err){
@@ -100,7 +101,7 @@ function DebugPanel({ activeTab, onApplyCode, onProposeFix, editorRef }) {
       {activeDebugIcon==="issues" && <Issues activeTab={activeTab} 
                                               bugs={bugs} 
                                               isLoading={loading} 
-                                              onApplyCode={onApplyCode} 
+                                          
                                               setNeedRefresh={setNeedRefresh} 
                                               onProposeFix={onProposeFix}
                                               editorRef={editorRef}

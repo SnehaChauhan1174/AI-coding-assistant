@@ -4,7 +4,7 @@ import GeneratePanel from './GeneratePanel';
 import DebugPanel from './DebugPanel';
 import ExplainPanel from './ExplainPanel';
 
-function RightPanel({activeTab, activePanel, setActivePanel, onApplyCode, onProposeFix, editorRef}){
+function RightPanel({activeTab, activePanel, setActivePanel, onApplyCode, onProposeFix, editorRef, fixLogs, setFixLogs}){
     return(
         <div className="right-panel">
             <div className="panel-content">
@@ -15,6 +15,8 @@ function RightPanel({activeTab, activePanel, setActivePanel, onApplyCode, onProp
                             onApplyCode={onApplyCode}
                             onProposeFix={onProposeFix}
                             editorRef={editorRef}
+                            fixLogs={fixLogs}
+                            setFixLogs={setFixLogs}
                             />}
                 {activePanel === "explain" && <ExplainPanel activeTab={activeTab}/>}
             </div>

@@ -11,7 +11,6 @@ import { Diff } from 'lucide-react';
 import "./styles/editor.css";
 
 
-
 const App=()=>{
   const [openTabs,setOpenTabs] = useState([]);
   const [activeTab, setActiveTab] = useState(null);
@@ -21,28 +20,27 @@ const App=()=>{
   const [activePanel,setActivePanel] = useState(null);
   const [showDiff,setShowDiff] = useState(false);
   const [proposedCode,setProposedCode]=useState(null);
+  const [fixLogs,setFixLogs]=useState([]);
   
   const editorRef=useRef(null);
 
   const handleFileClick=async(file)=>{
-    //fetch real content from backend
-    try{
-    const resp=await fetch(`http://localhost:8000/file-content?path=${file.path}`,{
-      method:"GET"
-    });
-    const data=await resp.json();
-    const fileWithContent={...file,content:data.content};
+      //fetch real content from backend
+      try{
+      const resp=await fetch(`http://localhost:8000/file-content?path=${file.path}`,{
+        method:"GET"
+      });
+      const data=await resp.json();
+      const fileWithContent={...file,content:data.content};
 
-    const alreadyOpen=openTabs.find(tab=>tab.name===file.name);
-    if(!alreadyOpen){
-      setOpenTabs([...openTabs,fileWithContent]);
+      const alreadyOpen=openTabs.find(tab=>tab.name===file.name);
+      if(!alreadyOpen){
+        setOpenTabs([...openTabs,fileWithContent]);
+      }
+      setActiveTab(fileWithContent);
+    }catch(err){
+      console.log(err);
     }
-    setActiveTab(fileWithContent);
-  }catch(err){
-    console.log(err);
-  }
-
-    
   }
  
   const handleTabClose = (tab) => {
@@ -57,7 +55,7 @@ const App=()=>{
       setChatWidth(window.innerWidth-e.clientX);
     }
   }
-  const handleApplyCode = (code) => {
+  const handleApplyCode = (code) => {//saving the updated code to active tab state to preserve changes across tabs
     if (activeTab) {
         const updatedTab = { ...activeTab, content: code }
         setActiveTab(updatedTab)
@@ -67,24 +65,51 @@ const App=()=>{
     }
   }
 
-  const handleProposeFix=(fixedData)=>{
-    setProposedCode(fixedData);
+  const handleProposeFix=(proposedCode)=>{
+    setProposedCode(proposedCode);
     setShowDiff(true);
   }
 
-  const handleKeep=()=>{
-    const editor=editorRef.current;
-    if(!editor) return;
-    editor.executeEdits("ai-fix",[{
-      range:proposedCode.range,
-      text:proposedCode.newCode
-    }]);
-
-    const newContent=editor.getValue();
-    handleApplyCode(newContent);
+  const handleKeep = async()=>{
+    // const editor=editorRef.current;
+    // if(!editor) return;
+    // editor.pushUndoStop(); // locks the state before the edit
+    // editor.executeEdits("ai-fix",[{//will swap that exact range part form old snippet to new nippet
+    //   range:proposedCode.range,
+    //   text:proposedCode.new_snippet
+    // }]);
+    // editor.pushUndoStop();// locks it after
+    
+    // const newContent=editor.getValue();
+    // handleApplyCode(newContent);
+    const modifiedContent = getModifiedContent();
+    handleApplyCode(modifiedContent);
     setShowDiff(false);
+    // //verify loop
+    // //calling verify endpoint from backend
+    // const resp=await fetch("http://localhost:8000/review-agent/verify",{
+    //   method:"post",
+    //   headers:{"Content-Type":"applications/json"},
+    //   body:{
+    //       "issue":proposedCode.issue,
+    //       "old_snippet":proposedCode.old_snippet,
+    //       "new_snippet":proposedCode.new_snippet
+    //   } 
+    // });
+    // const data = await resp.json();
+    // //in data status and reason to store in the logs
+    // setFixLogs(prev=>[
+    //   ...prev,
+    //   {
+    //     status:data.status,
+    //     reason:data.reason
+    //   }
+    // ]);
+    //after pass removing the issue card from panel
+    // setBugs(prev=>prev.filter(
+    //   bug=>bug.id!=proposedCode.issue.id
+    // ))
     setProposedCode(null);
-
   }
   const extensions = {
     "jsx": "javascript",
@@ -102,6 +127,21 @@ const App=()=>{
       return "txt";
     }
     return extensions[ext];
+  }
+  const getModifiedContent=()=>{
+    if(!proposedCode || !activeTab) return "";
+    const model=editorRef.current?.getModel();
+    if(!model) return "";
+    //simulate the edit
+    const lines=activeTab.content.split("\n");
+    const range=proposedCode.range;
+    const newLines=proposedCode.new_snippet.split('\n');
+    lines.splice(
+      range.startLineNumber-1,
+      range.endLineNumber-range.startLineNumber+1,
+      ...newLines
+    )
+    return lines.join("\n");
   }
 
 
@@ -136,7 +176,7 @@ const App=()=>{
           />
           {showDiff && (
             <div className="diff-actions">
-              <button className='keep-btn' onClick={()=>{handleKeep}}>✓ Keep</button>
+              <button className='keep-btn' onClick={handleKeep}>✓ Keep</button>
               <button className="undo-btn" onClick={() => {
                   setShowDiff(false)
                   setProposedCode(null)
@@ -144,19 +184,9 @@ const App=()=>{
             </div>
 
           )}
-          {showDiff ? (
-            <DiffEditor 
-                height="100%"
-                theme="vs-dark"
-                original={activeTab?.content|| ""}
-                modified={proposedCode|| ""}
-                language={activeTab ? getExtension(activeTab.name) : "javascript"}
-                options={{
-                    renderSideBySide: false  // inline diff like VS Code
-                }}
-              />
-          ):(
-              <Editor
+          <div style={{height:"100%", display:showDiff ? "none" : "block"}}>
+            <Editor
+              key="main-editor"
                 height="100%"
                 language={activeTab ? getExtension(activeTab.name):"javascript"}
                 theme="vs-dark"
@@ -172,6 +202,18 @@ const App=()=>{
                   }
                 }}
               />
+          </div>
+           {showDiff && (
+              <div style={{ height: "100%" }}>
+                  <DiffEditor
+                      height="100%"
+                      theme="vs-dark"
+                      original={activeTab?.content || ""}
+                      modified={getModifiedContent() || ""}
+                      language={activeTab ? getExtension(activeTab.name) : "javascript"}
+                      options={{ renderSideBySide: false }}
+                  />
+              </div>
           )}
         </div>
 
@@ -186,6 +228,8 @@ const App=()=>{
             onApplyCode={handleApplyCode}
             onProposeFix={handleProposeFix}
             editorRef={editorRef} 
+            fixLogs={fixLogs}
+            setFixLogs={setFixLogs}
           />
         </div>
       </div>
