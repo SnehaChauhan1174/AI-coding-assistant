@@ -5,6 +5,8 @@ from groq import Groq
 from dotenv import load_dotenv
 import os
 from typing import Optional
+from DebugAgent.review_agent import review_agent
+from DebugAgent.fix_agent import fix_agent
 
 load_dotenv()
 
@@ -59,32 +61,32 @@ def generate(request: GenerateRequest):
 class FileRequest(BaseModel):
     fileContent: str
     fileName: Optional[str] = None
-    language: Optional[str] = "code"   
+     
 
-@app.post("/debug")
-def debug(request: FileRequest):
-    response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=[
-            {
-                "role": "system",
-                "content": (
-                    f"You are a {request.language} code debugger. "
-                    "Analyze the provided code and return ONLY a JSON object "
-                    "with this exact structure:\n"
-                    '{"summary": "one sentence assessment", '
-                    '"bugs": [{"line": <number or null>, "issue": "what is wrong", "fix": "how to fix it"}]}'
-                )
-            },
-            {
-                "role": "user",
-                "content": f"File: {request.fileName}\n\n{request.fileContent}"
-            }
-        ],
-        response_format={"type": "json_object"}
-    )
-    import json
-    return json.loads(response.choices[0].message.content)
+# @app.post("/debug")
+# def debug(request: FileRequest):
+#     response = client.chat.completions.create(
+#         model="llama-3.3-70b-versatile",
+#         messages=[
+#             {
+#                 "role": "system",
+#                 "content": (
+#                     f"You are a {request.language} code debugger. "
+#                     "Analyze the provided code and return ONLY a JSON object "
+#                     "with this exact structure:\n"
+#                     '{"summary": "one sentence assessment", '
+#                     '"bugs": [{"line": <number or null>, "issue": "what is wrong", "fix": "how to fix it"}]}'
+#                 )
+#             },
+#             {
+#                 "role": "user",
+#                 "content": f"File: {request.fileName}\n\n{request.fileContent}"
+#             }
+#         ],
+#         response_format={"type": "json_object"}
+#     )
+#     import json
+#     return json.loads(response.choices[0].message.content)
 
 def build_tree(path):
     tree=[]
@@ -118,6 +120,36 @@ def create_file_path(path:str,name:str):
     file_path=os.path.join(path,name)
     os.makedirs(file_path,exist_ok=True) # makedirs makes nested folders
     return {"success": True, "path": file_path}
+
+@app.post("/review-agent")
+def run_review_agent(request: FileRequest):
+    result = review_agent.invoke({
+        "code": request.fileContent,
+        "filename": request.fileName,
+        "context": "",
+        "raw_issues": [],
+        "issues": [],
+        "steps": [],
+        "confidence": 0.0,
+        "status": "running"
+    })
+    return {
+        "steps": result["steps"],
+        "issues": result["issues"]
+    }
+
+
+@app("/fix-agent/generate")
+def generate_fix(req:dict):
+    result = fix_agent.invoke({
+        "issue":req["issue"],
+        "code":req["code"],
+        "logs":[]
+    })
+    return {
+        "replacement":result["patch"]["replacement"]
+    }
+    
 
 
 

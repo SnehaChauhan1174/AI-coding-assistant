@@ -1,0 +1,27 @@
+.diff-actions {
+    display: flex;
+    gap: 8px;
+    padding: 6px 12px;
+    background: #2d2d2d;
+    border-bottom: 1px solid #3d3d3d;
+}
+
+.keep-btn {
+    background: #2ea043;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 12px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.undo-btn {
+    background: #3c3c3c;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 12px;
+    cursor: pointer;
+    font-size: 12px;
+}

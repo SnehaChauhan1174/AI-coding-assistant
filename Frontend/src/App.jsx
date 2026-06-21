@@ -1,12 +1,15 @@
-import Editor from '@monaco-editor/react';
+import Editor, {DiffEditor} from '@monaco-editor/react';
 import FileExplorer from './Components/FileExplorer';
 import ChatPanel from './Components/ChatPanel';
 import Tabs from './Components/Tabs';
 import ActivityBar from './Components/ActivityBar';
 import RightPanel from './Components/RightPanel';
 import ToolBar from './Components/ToolBar';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import './App.css';
+import { Diff } from 'lucide-react';
+import "./styles/editor.css";
+
 
 
 const App=()=>{
@@ -16,7 +19,10 @@ const App=()=>{
   const [explorerWidth, setExplorerWidth] = useState(250);
   const [chatWidth, setChatWidth] = useState(300);
   const [activePanel,setActivePanel] = useState(null);
+  const [showDiff,setShowDiff] = useState(false);
+  const [proposedCode,setProposedCode]=useState(null);
   
+  const editorRef=useRef(null);
 
   const handleFileClick=async(file)=>{
     //fetch real content from backend
@@ -60,19 +66,39 @@ const App=()=>{
         ))
     }
   }
-  const extensions={
-    "jsx":"javascript",
-    "js":"javascript",
-    "java":"java",
-    "py":"python",
-    "cpp":"cpp",
-    "html":"html",
-    "css":"css",
-    "env":"env",
+
+  const handleProposeFix=(fixedData)=>{
+    setProposedCode(fixedData);
+    setShowDiff(true);
   }
-  const getExtension=(name)=>{
-    const ext=name.split(".").pop();
-    if(!(ext in extensions)){
+
+  const handleKeep=()=>{
+    const editor=editorRef.current;
+    if(!editor) return;
+    editor.executeEdits("ai-fix",[{
+      range:proposedCode.range,
+      text:proposedCode.newCode
+    }]);
+
+    const newContent=editor.getValue();
+    handleApplyCode(newContent);
+    setShowDiff(false);
+    setProposedCode(null);
+
+  }
+  const extensions = {
+    "jsx": "javascript",
+    "js": "javascript",
+    "java": "java",
+    "py": "python",
+    "cpp": "cpp",
+    "html": "html",
+    "css": "css",
+    "env": "env",
+  }
+  const getExtension = (name) => {
+    const ext = name.split(".").pop();
+    if (!(ext in extensions)) {
       return "txt";
     }
     return extensions[ext];
@@ -108,22 +134,45 @@ const App=()=>{
               activePanel={activePanel}
               setActivePanel={setActivePanel}
           />
-          <Editor
-            height="100%"
-            language={activeTab ? getExtension(activeTab.name):"javascript"}
-            theme="vs-dark"
-            className='editor-area'
-            value={activeTab ? activeTab.content : "// Start coding here..."}
-            onChange={(newValue) => {
-              if (activeTab) {
-                const updated = { ...activeTab, content: newValue }
-                setActiveTab(updated)
-                setOpenTabs(openTabs.map(t =>
-                  t.name === activeTab.name ? updated : t
-                ))
-              }
-            }}
-          />
+          {showDiff && (
+            <div className="diff-actions">
+              <button className='keep-btn' onClick={()=>{handleKeep}}>✓ Keep</button>
+              <button className="undo-btn" onClick={() => {
+                  setShowDiff(false)
+                  setProposedCode(null)
+              }}>✗ Undo</button>
+            </div>
+
+          )}
+          {showDiff ? (
+            <DiffEditor 
+                height="100%"
+                theme="vs-dark"
+                original={activeTab?.content|| ""}
+                modified={proposedCode|| ""}
+                language={activeTab ? getExtension(activeTab.name) : "javascript"}
+                options={{
+                    renderSideBySide: false  // inline diff like VS Code
+                }}
+              />
+          ):(
+              <Editor
+                height="100%"
+                language={activeTab ? getExtension(activeTab.name):"javascript"}
+                theme="vs-dark"
+                onMount={(editor) => editorRef.current = editor}
+                value={activeTab ? activeTab.content : "// Start coding here..."}
+                onChange={(newValue) => {
+                  if (activeTab) {
+                    const updated = { ...activeTab, content: newValue }
+                    setActiveTab(updated)
+                    setOpenTabs(openTabs.map(t =>
+                      t.name === activeTab.name ? updated : t
+                    ))
+                  }
+                }}
+              />
+          )}
         </div>
 
         <div className='drag-handle' 
@@ -135,14 +184,16 @@ const App=()=>{
             activePanel={activePanel}
             setActivePanel={setActivePanel}
             onApplyCode={handleApplyCode}
+            onProposeFix={handleProposeFix}
+            editorRef={editorRef} 
           />
         </div>
       </div>
-      <div className='status-bar'>
+      {/* <div className='status-bar'>
           <span>AI Coding Assistant</span>
           <span>{activeTab ? activeTab.name : "No file open"}</span>
           <span>{activeTab ? "JavaScript" : ""}</span>
-      </div>
+      </div> */}
     </div>
   )
 }

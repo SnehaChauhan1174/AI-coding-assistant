@@ -425,12 +425,7 @@ body {
 }
 
 
-.debug-panel{
-    padding:10px;
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-}
+
 
 .issue-card{
     background:#2d2d2d;

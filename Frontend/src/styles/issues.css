@@ -1,0 +1,160 @@
+.issues-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+}
+
+.issue-card {
+  background: #1b1b1b;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 14px;
+  color: white;
+}
+
+.issue-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.issue-type {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.issue-type.bug {
+  background: rgba(255, 80, 80, 0.15);
+  color: #ff6b6b;
+}
+
+.issue-type.bad-practice {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+}
+
+.issue-type.edge-case {
+  background: rgba(0, 188, 212, 0.15);
+  color: #00bcd4;
+}
+
+.issue-type.suggestion {
+  background: rgba(76, 175, 80, 0.15);
+  color: #4caf50;
+}
+
+.issue-line {
+  color: #b0b0b0;
+  font-size: 13px;
+}
+
+.issue-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 6px;
+  color: #ff6b6b;
+}
+
+.issue-description {
+  font-size: 13px;
+  color: #b8b8b8;
+  line-height: 1.45;
+  margin-bottom: 12px;
+}
+
+/* Diff Block */
+
+.diff-block {
+  border: 1px solid #2d2d2d;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #0d1117;
+  margin-bottom: 14px;
+}
+
+.diff-line {
+  margin: 0;
+  padding: 8px 12px;
+  white-space: pre-wrap;
+  overflow-x: auto;
+  font-family: Consolas, Monaco, monospace;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.removed {
+  background: rgba(248, 81, 73, 0.15);
+  color: #ff7b72;
+  border-left: 3px solid #ff7b72;
+}
+
+.added {
+  background: rgba(46, 160, 67, 0.15);
+  color: #56d364;
+  border-left: 3px solid #56d364;
+}
+
+.diff-line span {
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+/* Buttons */
+
+.issue-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.apply-btn,
+.explain-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.apply-btn {
+  background: #2f6fed;
+  color: white;
+}
+
+.explain-btn {
+  background: #2a2a2a;
+  color: white;
+  border: 1px solid #444;
+}
+
+.apply-btn:hover,
+.explain-btn:hover {
+  opacity: 0.9;
+}
+
+/* Empty State */
+
+.empty-state {
+  height: 100%;
+  min-height: 350px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #bdbdbd;
+  text-align: center;
+}
+
+.empty-state h2 {
+  margin-bottom: 6px;
+  color: white;
+}
+
+.empty-state p {
+  max-width: 320px;
+}

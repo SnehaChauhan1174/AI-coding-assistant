@@ -1,0 +1,63 @@
+.debug-sidebar {
+    width: 60px;
+    background: #252526;
+    border-right: 1px solid #3c3c3c;
+    margin-left: 1px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    gap: 10px;
+    padding-top: 12px;
+}
+
+.debug-icon {
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: transparent;
+    border: 1px solid #3c3c3c;
+    border-radius: 8px;
+
+    color: #aaaaaa;
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.debug-icon:hover {
+    background: #333333;
+    color: white;
+}
+
+.debug-icon.active {
+    background: #0078d4;
+    color: white;
+    border-color: #0078d4;
+}
+
+.debug-panel {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
+    align-items: flex-start;
+}
+
+.debug-sidebar-wrapper{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.debug-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    color: #cccccc;
+    height: 100%;
+}

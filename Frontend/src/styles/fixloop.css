@@ -1,0 +1,37 @@
+.fixloop-container{
+    padding:20px;
+    color:white;
+}
+
+.fixloop-logs{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    margin-top:20px;
+}
+
+.fixlog{
+    padding:12px;
+    border-radius:8px;
+    border:1px solid #333;
+    background:#1d1d1d;
+}
+
+.fixlog.success{
+    border-left:4px solid #22c55e;
+}
+
+.fixlog.warning{
+    border-left:4px solid orange;
+}
+
+.fixlog.error{
+    border-left:4px solid red;
+}
+
+.fixloop-summary{
+    margin-top:30px;
+    padding:15px;
+    border:1px solid #333;
+    border-radius:8px;
+}

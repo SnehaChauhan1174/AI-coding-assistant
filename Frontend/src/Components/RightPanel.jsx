@@ -4,12 +4,18 @@ import GeneratePanel from './GeneratePanel';
 import DebugPanel from './DebugPanel';
 import ExplainPanel from './ExplainPanel';
 
-function RightPanel({activeTab, activePanel, setActivePanel, onApplyCode}){
+function RightPanel({activeTab, activePanel, setActivePanel, onApplyCode, onProposeFix, editorRef}){
     return(
         <div className="right-panel">
             <div className="panel-content">
                 {activePanel === "generate" && <ChatPanel activeTab={activeTab} onApplyCode={onApplyCode} />}
-                {activePanel === "debug" && <DebugPanel activeTab={activeTab}/>}
+                {activePanel === "debug" && 
+                        <DebugPanel 
+                            activeTab={activeTab} 
+                            onApplyCode={onApplyCode}
+                            onProposeFix={onProposeFix}
+                            editorRef={editorRef}
+                            />}
                 {activePanel === "explain" && <ExplainPanel activeTab={activeTab}/>}
             </div>
         </div>
