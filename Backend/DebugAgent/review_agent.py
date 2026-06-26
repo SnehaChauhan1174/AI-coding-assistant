@@ -104,6 +104,7 @@ def analyse_code(state:ReviewState):
         if text.startswith("json"):
             text = text[4:].strip()
     res=json.loads(text)
+    
 
     return {
         "raw_issues": res["issues"],  # list of all issues

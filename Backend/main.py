@@ -7,6 +7,10 @@ import os
 from typing import Optional
 from DebugAgent.review_agent import review_agent
 from DebugAgent.fix_agent import fix_agent
+from FlowChart.generalized_tree import get_python_imports,get_treesitter_imports,extract_dependencies
+import re
+from fastapi import FastAPI, HTTPException
+
 
 load_dotenv()
 
@@ -153,10 +157,45 @@ def generate_fix(req:FixRequest):
     return {
         "replacement":result["patch"]["replacement"]
     }
+
+class FlowchartReq(BaseModel):
+    file_path:str
+    project_root:str
+
+@app.post("/dependencies")
+def get_file_dependencies(request:FlowchartReq):
+    # print("FILE :", repr(request.file_path))
+    # print("ROOT :", repr(request.project_root))
+
+    file_path = os.path.normpath(request.file_path)
+    proj_root = os.path.normpath(request.project_root)
+
+    # print("Normalized file :", file_path)
+    # print("Normalized root :", proj_root)
+    # print("Exists :", os.path.exists(file_path))
+
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=400, detail=f"File not found: {file_path}")
+    raw_dependencies=extract_dependencies(file_path,proj_root)
+    print("RAW DEPENDENCIES:", raw_dependencies)
+    formatted_dep=[]
+    for dep_path in raw_dependencies:
+        dep_type="Utility"
+        if "components" in dep_path.lower():
+            dep_type="Component"
+        elif "hooks" in dep_path.lower():
+            dep_type="Hook"
+        formatted_dep.append({
+            "path": dep_path,
+            "type": dep_type
+        })
+    return {
+        "entry": os.path.basename(file_path),
+        "entry_dir": "/" + os.path.relpath(os.path.dirname(file_path), proj_root).replace("\\", "/"),
+        "dependencies": formatted_dep
+    }
+
+
     
-
-
-
-
 
 

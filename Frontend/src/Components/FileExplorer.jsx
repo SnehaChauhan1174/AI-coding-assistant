@@ -3,7 +3,7 @@ import {ChevronDown,ChevronRight, FolderOpen, FolderPlus} from 'lucide-react';
 
 function FileItem({item,onFileClick}){
     const [isOpen,setIsOpen]=useState(false); // to hide or show the file tree
-
+    
     return(
         <>
             {item.type=="file" && (
@@ -35,7 +35,7 @@ function FileItem({item,onFileClick}){
 
 }
 
-function FileExplorer({onFileClick}){
+function FileExplorer({onProjectOpen,onFileClick}){
     const [isOpen,setIsOpen]=useState(false);
     const [folderOpen,setFolderOpen]=useState(false);
     const [path,setPath]=useState("");
@@ -52,6 +52,7 @@ function FileExplorer({onFileClick}){
             const data=await resp.json();
             //files will be a list of file/folder objects 
             setFiles(data.tree);
+            onProjectOpen(path);
             setFolderOpen(true);
         }catch(err){
             console.err(err);

@@ -1,13 +1,13 @@
-import { useState } from "react"
+import { useState } from "react";
 
 function ChatPanel({ activeTab, onApplyCode }) {
-    const [prompt, setPrompt] = useState("")
-    const [generatedCode, setGeneratedCode] = useState("")
-    const [isLoading, setIsLoading] = useState(false)
+    const [prompt, setPrompt] = useState("");
+    const [generatedCode, setGeneratedCode] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleGenerate = async () => {
-        if (!prompt.trim()) return
-        setIsLoading(true)
+        if (!prompt.trim()) return;
+        setIsLoading(true);
         try {
             const resp = await fetch("http://localhost:8000/generate", {
                 method: "POST",
@@ -17,13 +17,13 @@ function ChatPanel({ activeTab, onApplyCode }) {
                     fileContent: activeTab ? activeTab.content : null,
                     fileName: activeTab ? activeTab.name : null
                 })
-            })
-            const data = await resp.json()
-            setGeneratedCode(data.code)
+            });
+            const data = await resp.json();
+            setGeneratedCode(data.code);
         } catch (err) {
-            console.error(err)
+            console.error(err);
         } finally {
-            setIsLoading(false)
+            setIsLoading(false);
         }
     }
 

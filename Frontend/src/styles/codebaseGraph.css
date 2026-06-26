@@ -1,0 +1,262 @@
+/* .graph-container{
+    width:100%;
+    height:100%;
+    background:#181818;
+    padding:40px;
+    box-sizing:border-box;
+    overflow:auto;
+}
+
+.entry-node{
+    width:260px;
+    margin:auto;
+    padding:16px;
+    background:#222;
+    border:2px solid #4facfe;
+    border-radius:10px;
+    text-align:center;
+}
+
+.node-title{
+    font-size:15px;
+    font-weight:bold;
+    color:white;
+}
+
+.node-path{
+    margin-top:8px;
+    color:#999;
+    font-size:12px;
+    word-break:break-word;
+}
+
+.dependency-row{
+    margin-top:80px;
+    display:flex;
+    justify-content:center;
+    gap:40px;
+    flex-wrap:wrap;
+}
+
+.dependency-node{
+    width:190px;
+    padding:15px;
+    background:#222;
+    border-radius:8px;
+    border:1px solid #555;
+    text-align:center;
+}
+
+.component{
+    border-color:#4caf50;
+}
+
+.hook{
+    border-color:#ff9800;
+}
+
+.utility{
+    border-color:#9c27b0;
+}
+
+/* Empty State */
+
+/* .empty-state {
+  height: 100%;
+  min-height: 350px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #bdbdbd;
+  text-align: center;
+}
+
+.empty-state h2 {
+  margin-bottom: 6px;
+  color: white;
+}
+
+.empty-state p {
+  max-width: 320px;
+} */ 
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.graph-wrapper {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    background: #1e1e1e;
+}
+
+.graph-canvas {
+    flex: 1;
+    position: relative;
+}
+
+.graph-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    background: #2d2d2d;
+    border-bottom: 1px solid #3d3d3d;
+    padding: 6px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.graph-header-title {
+    color: #cccccc;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.graph-legend {
+    display: flex;
+    gap: 12px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: #aaa;
+}
+
+.legend-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.graph-detail-panel {
+    width: 230px;
+    background: #252526;
+    border-left: 1px solid #3d3d3d;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    gap: 12px;
+    overflow-y: auto;
+}
+
+.detail-panel-label {
+    font-size: 11px;
+    color: #858585;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.detail-node-title {
+    border-radius: 6px;
+    padding: 10px 12px;
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.detail-node-info {
+    font-size: 12px;
+    color: #aaaaaa;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.detail-node-info span {
+    color: #858585;
+}
+
+.detail-node-path {
+    word-break: break-all;
+}
+
+.show-deps-btn {
+    background: #0078d4;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 7px 12px;
+    cursor: pointer;
+    font-size: 12px;
+    text-align: left;
+}
+
+.show-deps-btn:hover {
+    background: #006cbf;
+}
+
+.detail-empty {
+    font-size: 12px;
+    color: #555;
+    margin: 0;
+}
+
+.detail-summary {
+    margin-top: auto;
+    border-top: 1px solid #3d3d3d;
+    padding-top: 12px;
+}
+
+.detail-summary-label {
+    font-size: 11px;
+    color: #858585;
+    margin: 0 0 6px;
+}
+
+.detail-summary-content {
+    font-size: 12px;
+    color: #aaa;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.graph-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background: #1e1e1e;
+}
+
+.graph-empty p {
+    color: #858585;
+    font-size: 13px;
+}
+
+.graph-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background: #1e1e1e;
+}
+
+.graph-spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid #3d3d3d;
+    border-top: 3px solid #0078d4;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+.graph-loading p {
+    color: #aaa;
+    margin-top: 12px;
+    font-size: 13px;
+}
+
+

@@ -5,6 +5,7 @@ import Tabs from './Components/Tabs';
 import ActivityBar from './Components/ActivityBar';
 import RightPanel from './Components/RightPanel';
 import ToolBar from './Components/ToolBar';
+import CodebaseGraph from './Components/CodebaseGraph';
 import { useState, useRef } from 'react';
 import './App.css';
 import { Diff } from 'lucide-react';
@@ -21,6 +22,8 @@ const App=()=>{
   const [showDiff,setShowDiff] = useState(false);
   const [proposedCode,setProposedCode]=useState(null);
   const [fixLogs,setFixLogs]=useState([]);
+  const [activeView, setActiveView]=useState("editor");
+  const[projectRoot,setProjectRoot]=useState("");
   
   const editorRef=useRef(null);
 
@@ -42,7 +45,7 @@ const App=()=>{
       console.log(err);
     }
   }
- 
+
   const handleTabClose = (tab) => {
     setOpenTabs(openTabs.filter(t => t.name !== tab.name))
     if(activeTab?.name === tab.name) setActiveTab(null)
@@ -143,7 +146,7 @@ const App=()=>{
     )
     return lines.join("\n");
   }
-
+  console.log(activeView);
 
   return(
     <div className="ide-container"
@@ -152,14 +155,15 @@ const App=()=>{
 
       <div className='main-area'>
         <div className='activity-bar'>
-          <ActivityBar/>
+          <ActivityBar activeView={activeView} setActiveView={setActiveView}/>
         </div>
 
         <div className='file-explorer' style={{ width:explorerWidth }}>
-          <FileExplorer onFileClick={(item)=>{
-                  handleFileClick(item);
-                  
-          }}/>
+          <FileExplorer 
+                    onProjectOpen={setProjectRoot}
+                    onFileClick={(item)=>{
+                        handleFileClick(item);
+                    }}/>
                      
         </div>
 
@@ -182,40 +186,50 @@ const App=()=>{
                   setProposedCode(null)
               }}>✗ Undo</button>
             </div>
+          )}
 
-          )}
-          <div style={{height:"100%", display:showDiff ? "none" : "block"}}>
-            <Editor
-              key="main-editor"
-                height="100%"
-                language={activeTab ? getExtension(activeTab.name):"javascript"}
-                theme="vs-dark"
-                onMount={(editor) => editorRef.current = editor}
-                value={activeTab ? activeTab.content : "// Start coding here..."}
-                onChange={(newValue) => {
-                  if (activeTab) {
-                    const updated = { ...activeTab, content: newValue }
-                    setActiveTab(updated)
-                    setOpenTabs(openTabs.map(t =>
-                      t.name === activeTab.name ? updated : t
-                    ))
-                  }
-                }}
-              />
-          </div>
-           {showDiff && (
-              <div style={{ height: "100%" }}>
-                  <DiffEditor
-                      height="100%"
-                      theme="vs-dark"
-                      original={activeTab?.content || ""}
-                      modified={getModifiedContent() || ""}
-                      language={activeTab ? getExtension(activeTab.name) : "javascript"}
-                      options={{ renderSideBySide: false }}
-                  />
+          {activeView==="editor" ? (
+            <>
+              <div style={{height:"100%", display:showDiff ? "none" : "block"}}>
+                <Editor
+                  key="main-editor"
+                  height="100%"
+                  language={activeTab ? getExtension(activeTab.name):"javascript"}
+                  theme="vs-dark"
+                  onMount={(editor) => editorRef.current = editor}
+                  value={activeTab ? activeTab.content : "// Start coding here..."}
+                  onChange={(newValue) => {
+                    if (activeTab) {
+                      const updated = { ...activeTab, content: newValue }
+                      setActiveTab(updated)
+                      setOpenTabs(openTabs.map(t =>
+                        t.name === activeTab.name ? updated : t
+                      ))
+                    }
+                  }}
+                />
               </div>
-          )}
-        </div>
+              {showDiff && (
+                <div style={{ height: "100%" }}>
+                  <DiffEditor
+                    height="100%"
+                    theme="vs-dark"
+                    original={activeTab?.content || ""}
+                    modified={getModifiedContent() || ""}
+                    language={activeTab ? getExtension(activeTab.name) : "javascript"}
+                    options={{ renderSideBySide: false }}
+                  />
+                </div>
+              )}
+            </>
+          ) : (
+            <CodebaseGraph
+              activeTab={activeTab}
+              projectRoot={projectRoot}
+            />
+          )
+      }
+      </div>
 
         <div className='drag-handle' 
             onMouseDown={()=>setDragging("chat")}></div>
