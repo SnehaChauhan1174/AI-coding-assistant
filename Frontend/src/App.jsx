@@ -18,6 +18,7 @@ const App=()=>{
   const [dragging, setDragging] = useState(null);
   const [explorerWidth, setExplorerWidth] = useState(250);
   const [chatWidth, setChatWidth] = useState(300);
+  
   const [activePanel,setActivePanel] = useState(null);
   const [showDiff,setShowDiff] = useState(false);
   const [proposedCode,setProposedCode]=useState(null);

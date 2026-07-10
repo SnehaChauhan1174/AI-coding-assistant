@@ -120,4 +120,25 @@ def extract_dependencies(file_path,project_root):
 
 print(get_treesitter_imports("D:/AI Coding Assistant/Frontend/src/App.jsx","D:/AI Coding Assistant/Frontend",".jsx"))
 
-
+def build_reverse_graph(project_root:str)->dict:
+    reverse_map={}
+    for root, dirs, files in os.walk(project_root):
+        dirs[:] = [d for d in dirs if d not in ['node_modules', '.git', '__pycache__', 'venv']]
+        
+        for file in files:
+            if not file.endswith(('.jsx', '.js', '.tsx', '.ts', '.py')):
+                continue
+            
+            file_path = os.path.join(root, file)
+            
+            try:
+                deps = extract_dependencies(file_path, project_root)
+                for dep in deps:
+                    dep_name = dep.split("\\").pop().split("/").pop()
+                    if dep_name not in reverse_map:
+                        reverse_map[dep_name] = []
+                    reverse_map[dep_name].append(file_path)
+            except Exception as e:
+                print(e)
+    
+    return reverse_map

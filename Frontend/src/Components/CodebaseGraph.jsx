@@ -210,7 +210,6 @@ function CodebaseGraph({ activeTab, projectRoot }) {
 
     return (
         <div className="graph-wrapper">
-
             <div className="graph-canvas">
                 <div className="graph-header">
                     <span className="graph-header-title">

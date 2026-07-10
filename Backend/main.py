@@ -7,9 +7,10 @@ import os
 from typing import Optional
 from DebugAgent.review_agent import review_agent
 from DebugAgent.fix_agent import fix_agent
-from FlowChart.generalized_tree import get_python_imports,get_treesitter_imports,extract_dependencies
+from FlowChart.generalized_tree import get_python_imports,get_treesitter_imports,extract_dependencies,build_reverse_graph
 import re
 from fastapi import FastAPI, HTTPException
+from FlowChart.code_flow_agent import run_code_flow_agent
 
 
 load_dotenv()
@@ -194,6 +195,46 @@ def get_file_dependencies(request:FlowchartReq):
         "entry_dir": "/" + os.path.relpath(os.path.dirname(file_path), proj_root).replace("\\", "/"),
         "dependencies": formatted_dep
     }
+
+project_reverse_map={}
+
+class OpenProjectReq(BaseModel):
+    proj_root:str
+
+@app.post("/open-project")
+def open_project(request:OpenProjectReq):
+    try:
+        global project_reverse_map
+        project_reverse_map=build_reverse_graph(request.proj_root)
+        return {"success":True, "files_indexed":len(project_reverse_map)}
+    except Exception as e:
+        print(e)
+
+    
+
+class CodeFlowRequest(BaseModel):
+    fileRoot:str
+    fileName:str
+
+@app.post("/code-flow")
+def get_code_flow(request:CodeFlowRequest):
+    with open(request.fileRoot,encoding="utf-8") as f:
+        file_content=f.read()
+    filename=os.path.basename(request.fileName)
+    parents=project_reverse_map.get(filename,[])
+    parents=[os.path.basename(p) for p in parents]
+
+    result=run_code_flow_agent(
+        file_content,
+        filename,
+        parents
+    )
+    return result
+
+
+
+
+
 
 
     

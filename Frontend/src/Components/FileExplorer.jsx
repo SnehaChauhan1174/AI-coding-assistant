@@ -32,7 +32,6 @@ function FileItem({item,onFileClick}){
             )}
         </>
     )
-
 }
 
 function FileExplorer({onProjectOpen,onFileClick}){
@@ -55,7 +54,7 @@ function FileExplorer({onProjectOpen,onFileClick}){
             onProjectOpen(path);
             setFolderOpen(true);
         }catch(err){
-            console.err(err);
+            console.log(err);
         }
     }
     return(
