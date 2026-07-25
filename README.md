@@ -29,7 +29,7 @@ Unlike conventional AI coding assistants that primarily focus on generating code
 - Keep / Undo proposed changes
 - Agent execution logs
 
-### 📊 Code Flow Graph
+### Code Flow Graph
 - Interactive dependency visualization
 - AST-based project analysis
 - Displays component relationships
@@ -71,7 +71,7 @@ LangGraph Agent Layer
 
 ---
 
-# 🏗 Architecture
+# Architecture
 
 ## Code Generation
 
@@ -93,7 +93,7 @@ Project Folder → Tree-sitter AST → Dependency Extraction → React Flow Grap
 
 ---
 
-# 🛠 Tech Stack
+# Tech Stack
 
 ### Frontend
 - React
@@ -253,7 +253,7 @@ This ensures developers remain in control while benefiting from AI assistance.
 
 ---
 
-# 🚀 Getting Started
+# Getting Started
 
 ## Clone Repository
 
@@ -302,7 +302,7 @@ GROQ_API_KEY=your_api_key
 
 ---
 
-# 📈 Project Highlights
+# Project Highlights
 
 - AI-assisted code generation
 - AI-powered debugging workflow
