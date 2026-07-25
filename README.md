@@ -1,6 +1,6 @@
 # AI Coding Assistant
 
-A browser-based IDE with an integrated AI coding assistant — inspired by Cursor and VS Code. Built from scratch with React, FastAPI, and Groq. The AI panel understands your full codebase context — not just what you type.
+An AI-powered browser-based coding assistant designed to improve **code generation, debugging, and codebase understanding** while keeping developers actively involved in the development process.
 
 ![Status](https://img.shields.io/badge/status-in%20development-yellow)
 ![Frontend](https://img.shields.io/badge/frontend-React%20%2B%20Vite-blue)
@@ -9,150 +9,321 @@ A browser-based IDE with an integrated AI coding assistant — inspired by Curso
 
 ---
 
-## Vision
 
-Most AI chat tools are blind to your project. AI Coding Assistant is being built to truly understand your codebase — file structure, import relationships, open files, selected code, and errors — so it can generate, debug, and explain with full context, not hallucinations.
+Unlike conventional AI coding assistants that primarily focus on generating code, this project emphasizes **understanding existing code**, **reviewing AI-generated changes**, and **visualizing project structure** through an interactive development environment.
 
 ---
 
 ## Features
 
-### Currently Built
-- **Monaco Editor** — the exact editor that powers VS Code, with syntax highlighting and line numbers
-- **File Explorer** — collapsible file tree with per-folder open/close state
-- **AI Chat Panel** — real-time chat with LLaMA 3.3 via Groq API, messages styled by role
-- **FastAPI Backend** — clean REST API with CORS, Pydantic validation, and dotenv config
-- **Separated Architecture** — React frontend on port 5173, FastAPI backend on port 8000
+### AI Code Generation
+- Context-aware code generation
+- Uses the currently opened file as context
+- Generates code inside the IDE
 
-### In Progress
-- File click → opens file content in Monaco editor
-- Multi-file tab bar (open, switch, close tabs)
-- AI receives currently open file as context with every message
-- Activity bar with proper icons (Files, Generate, Debug, Explain)
-- Status bar showing language, line number, cursor position
+### AI Debug Assistant
+- Reviews the active file
+- Detects potential issues
+- Generates minimal code fixes
+- Monaco Diff Editor integration
+- Keep / Undo proposed changes
+- Agent execution logs
 
-### Planned (Roadmap)
-- Backend reads real files from disk
-- Full project file tree served via API
-- Import graph — which file imports which
-- Codebase flowchart (React Flow) built from real import relationships
-- RAG (Retrieval Augmented Generation) — index entire project, retrieve only relevant files per query so AI has smart context without hitting token limits
-- Generate panel — AI writes code, diff preview before applying to editor
-- Debug panel — error chain tracing across files, fix suggestions
-- Explain panel — decision cards explaining why code was written a certain way
-- Code execution sandbox — run Python code, see output inside IDE
-- Streaming AI responses — tokens appear character by character
-- Builder Agent loop — generate → execute → fix → retry automatically
+### 📊 Code Flow Graph
+- Interactive dependency visualization
+- AST-based project analysis
+- Displays component relationships
+- Visualizes project structure using React Flow
 
----
+### Human-in-the-Loop Workflow
+The assistant never modifies code automatically.
 
-## Tech Stack
+Instead it:
 
-| Layer | Technology |
-|---|---|
-| Frontend | React 18, Vite |
-| Code Editor | Monaco Editor (`@monaco-editor/react`) |
-| Icons | Lucide React |
-| Styling | Custom CSS (VS Code dark theme) |
-| Backend | Python, FastAPI, Uvicorn |
-| AI Model | LLaMA 3.3 70B via Groq API |
-| Config | python-dotenv |
+- Reviews code
+- Suggests fixes
+- Shows code differences
+- Waits for developer approval
 
 ---
 
-## Project Structure
+# System Pipeline
 
-```
-AI-Coding-Assistant/
-│
-├── Frontend/
-│   ├── src/
-│   │   ├── Components/
-│   │   │   ├── FileExplorer.jsx    # collapsible file tree
-│   │   │   └── ChatPanel.jsx       # AI chat UI + API calls
-│   │   ├── App.jsx                 # main layout (activity bar, panels)
-│   │   └── App.css                 # VS Code inspired dark theme
-│   ├── index.html
-│   └── package.json
-│
-└── Backend/
-    ├── main.py                     # FastAPI app, /chat endpoint, Groq integration
-    ├── .env                        # API keys — never committed
-    ├── .gitignore
-    └── requirements.txt
+```text
+Developer
+      │
+      ▼
+React + Monaco IDE
+      │
+      ▼
+FastAPI Backend
+      │
+      ▼
+LangGraph Agent Layer
+     ├── Review Agent
+     └── Fix Agent
+      │
+      ├────────► Generated Code
+      ├────────► Debug Suggestions
+      ├────────► Monaco Diff Viewer
+      └────────► Code Flow Graph
 ```
 
 ---
 
-## Getting Started
+# 🏗 Architecture
 
-### Prerequisites
-- Node.js 18+
-- Python 3.11+
-- Groq API key — free at [console.groq.com](https://console.groq.com)
+## Code Generation
+
+```text
+Prompt → Current File Context → Generate Agent → Generated Code → Monaco Editor
+```
+
+## Debug Workflow
+
+```text
+Current File → Review Agent → Issues → Fix Agent → Proposed Diff → Diff Editor → Keep / Undo
+```
+
+## Code Flow
+
+```text
+Project Folder → Tree-sitter AST → Dependency Extraction → React Flow Graph
+```
+
+---
+
+# 🛠 Tech Stack
 
 ### Frontend
-```bash
-cd Frontend
-npm install
-npm run dev
-# runs at http://localhost:5173
-```
+- React
+- JavaScript
+- Monaco Editor
+- React Flow
+- CSS
 
 ### Backend
+- FastAPI
+- Python
+
+### AI
+- LangGraph
+- LangChain
+- Groq API
+- Llama 3.3 70B
+
+### Static Analysis
+- Tree-sitter
+- Abstract Syntax Tree (AST)
+
+---
+
+# Project Structure
+
+```text
+AI-Coding-Assistant/
+
+Frontend/
+│
+├── Components/
+│   ├── FileExplorer
+│   ├── Tabs
+│   ├── RightPanel
+│   ├── ChatPanel
+│   ├── ToolBar
+│   ├── ActivityBar
+│   └── CodebaseGraph
+│
+├── styles/
+└── App.jsx
+
+
+Backend/
+│
+├── main.py
+├── review_agent.py
+├── fix_agent.py
+├── dependency_graph.py
+├── generalized_tree.py
+└── utils/
+```
+
+---
+
+# Current Functionality
+
+✅ Project Explorer
+
+✅ Multi-file Editor
+
+✅ Monaco Editor Integration
+
+✅ AI Code Generation
+
+✅ AI Code Review
+
+✅ AI Fix Suggestions
+
+✅ Monaco Diff Viewer
+
+✅ Keep / Undo Changes
+
+✅ Agent Execution Logs
+
+✅ Code Flow Graph
+
+---
+
+# Backend APIs
+
+| Endpoint | Description |
+|-----------|-------------|
+| `/generate` | Generate code |
+| `/review` | Review active file |
+| `/fix` | Generate code fixes |
+| `/files` | Load project files |
+| `/file-content` | Fetch file content |
+| `/dependencies` | Generate dependency graph |
+| `/open-project` | Open and index a project |
+| `/code-flow` | Generate code flow graph |
+
+---
+
+# Human-in-the-Loop Philosophy
+
+The assistant is intentionally designed to support—not replace—the developer.
+
+Every AI-generated change follows the workflow:
+
+```text
+Review → Suggest → Compare → Developer Decision
+```
+
+This ensures developers remain in control while benefiting from AI assistance.
+
+---
+
+# Future Work
+
+### IDE
+- Integrated terminal
+- Run and build projects inside the IDE
+
+### Debug Panel
+- Runtime Error Chain visualization
+- Automatic verification after fixes
+
+### Code Flow
+- Function-level execution flow
+- State update visualization
+- Event flow tracking
+- Backend API interaction graph
+
+### AI
+- Multi-file context reasoning
+- Multi-language support
+- Richer code explanations
+- Guided "Thinking Mode"
+
+---
+
+# 📸 Screenshots
+
+### IDE
+
+> _Add screenshot_
+
+---
+
+### Debug Panel
+
+> _Add screenshot_
+
+---
+
+### Monaco Diff Viewer
+
+> _Add screenshot_
+
+---
+
+### Code Flow Graph
+
+> _Add screenshot_
+
+---
+
+# 🚀 Getting Started
+
+## Clone Repository
+
+```bash
+git clone https://github.com/<your-username>/AI-Coding-Assistant.git
+```
+
+---
+
+## Backend
+
 ```bash
 cd Backend
+
 python -m venv venv
-venv\Scripts\activate        # Windows
-source venv/bin/activate     # Mac/Linux
-pip install fastapi uvicorn groq python-dotenv
+
+# Windows
+venv\Scripts\activate
+
+pip install -r requirements.txt
+
+uvicorn main:app --reload
 ```
 
-Create `.env` in the `Backend` folder:
-```
-GROQ_API_KEY=your_api_key_here
-```
+---
+
+## Frontend
 
 ```bash
-uvicorn main:app --reload
-# runs at http://localhost:8000
-# API docs at http://localhost:8000/docs
+cd Frontend
+
+npm install
+
+npm run dev
 ```
 
 ---
 
-## API
+# Environment Variables
 
-| Method | Endpoint | Description |
-|---|---|---|
-| GET | `/` | Health check |
-| POST | `/chat` | Send message, get AI response |
+Create a `.env` file inside the backend.
 
-### POST `/chat`
-```json
-// Request
-{ "message": "Write a Python function to reverse a string" }
-
-// Response
-{ "response": "Here is a Python function..." }
+```env
+GROQ_API_KEY=your_api_key
 ```
 
 ---
 
-## How AI Context Works (Current → Planned)
+# 📈 Project Highlights
 
-```
-Level 1 (current)  → user message only
-Level 2 (next)     → current open file sent with every message
-Level 3            → all open files sent
-Level 4            → backend reads full project from disk
-Level 5            → import graph built from real file relationships
-Level 6 (RAG)      → entire project indexed, only relevant files retrieved per query
-```
-
-RAG means the AI won't hallucinate about your project — it will retrieve the actual relevant files and send only those as context, staying within token limits while being fully aware of your codebase.
+- AI-assisted code generation
+- AI-powered debugging workflow
+- Monaco Diff Editor integration
+- LangGraph-based agent architecture
+- AST-based project analysis
+- Interactive Code Flow Graph
+- Human-in-the-loop development workflow
 
 ---
+
+# Author
+
+**Sneha Chauhan**
+
+B.Tech AI & ML Student
+
+SPARK Internship – IIT Roorkee
+
+---
+
 
 
 
