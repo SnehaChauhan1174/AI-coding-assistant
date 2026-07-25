@@ -30,9 +30,7 @@ Unlike conventional AI coding assistants that primarily focus on generating code
 - Agent execution logs
 
 ### Code Flow Graph
-- Interactive dependency visualization
 - AST-based project analysis
-- Displays component relationships
 - Visualizes project structure using React Flow
 
 ### Human-in-the-Loop Workflow
