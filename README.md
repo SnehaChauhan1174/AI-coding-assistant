@@ -227,31 +227,7 @@ This ensures developers remain in control while benefiting from AI assistance.
 
 ---
 
-# 📸 Screenshots
 
-### IDE
-
-> _Add screenshot_
-
----
-
-### Debug Panel
-
-> _Add screenshot_
-
----
-
-### Monaco Diff Viewer
-
-> _Add screenshot_
-
----
-
-### Code Flow Graph
-
-> _Add screenshot_
-
----
 
 # Getting Started
 
